@@ -372,5 +372,4 @@ class Uri implements UriInterface
     {
         
     }
-
 }

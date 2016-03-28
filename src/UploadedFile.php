@@ -141,5 +141,4 @@ class UploadedFile implements UploadedFileInterface
     {
         
     }
-
 }

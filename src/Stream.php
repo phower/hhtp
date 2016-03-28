@@ -203,5 +203,4 @@ class Stream implements StreamInterface
     {
         
     }
-
 }

@@ -221,5 +221,4 @@ class Message implements MessageInterface
     {
         
     }
-
 }
