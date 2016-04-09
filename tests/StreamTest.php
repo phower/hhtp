@@ -13,5 +13,4 @@ class StreamTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(\Psr\Http\Message\StreamInterface::class, $message);
     }
-
 }

@@ -13,5 +13,4 @@ class RequestTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(\Psr\Http\Message\RequestInterface::class, $message);
     }
-
 }

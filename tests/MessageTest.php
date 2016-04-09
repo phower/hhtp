@@ -13,5 +13,4 @@ class MessageTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(\Psr\Http\Message\MessageInterface::class, $message);
     }
-
 }
