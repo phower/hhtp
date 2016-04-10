@@ -342,5 +342,4 @@ class Stream implements StreamInterface
 
         return $metadata[$key];
     }
-
 }

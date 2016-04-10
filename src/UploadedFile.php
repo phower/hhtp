@@ -3,6 +3,7 @@
 namespace Phower\Http;
 
 use Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Value object representing a file uploaded through an HTTP request.
@@ -14,6 +15,92 @@ use Psr\Http\Message\UploadedFileInterface;
  */
 class UploadedFile implements UploadedFileInterface
 {
+
+    /**
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @var string
+     */
+    private $type;
+
+    /**
+     * @var int
+     */
+    private $error;
+
+    /**
+     * @var null|string
+     */
+    private $file;
+
+    /**
+     * @var bool
+     */
+    private $moved = false;
+
+    /**
+     * @var int
+     */
+    private $size;
+
+    /**
+     * @var null|StreamInterface
+     */
+    private $stream;
+
+    /**
+     * Class constructor
+     *
+     * @param string|resource|\Phower\Http\StreamInterface $source
+     * @param int $size
+     * @param int $error
+     * @param string|null $name
+     * @param string|null $type
+     * @throws Exception\InvalidArgumentException
+     */
+    public function __construct($source, $size, $error, $name = null, $type = null)
+    {
+        if (is_string($source)) {
+            $this->file = $source;
+        } elseif (is_resource($source)) {
+            $this->stream = new Stream($source);
+        }
+
+        if (!$this->file && !$this->stream) {
+            if (!$source instanceof StreamInterface) {
+                $message = sprintf('Invalid stream or file provided for "%s".', __METHOD__);
+                throw new Exception\InvalidArgumentException($message);
+            }
+            $this->stream = $source;
+        }
+
+        if (!is_int($size)) {
+            $message = sprintf('Invalid size provided for "%s"; must be an integer.', __METHOD__);
+            throw new Exception\InvalidArgumentException($message);
+        }
+        $this->size = $size;
+
+        if (!is_int($error) || $error < 0 || $error > 8) {
+            $message = sprintf('Invalid error status for "%s"; must be an UPLOAD_ERR_* constants.', __METHOD__);
+            throw new Exception\InvalidArgumentException($message);
+        }
+        $this->error = $error;
+
+        if (null !== $name && !is_string($name)) {
+            $message = sprintf('Invalid client filename provided for "%s"; must be null or a string.', __METHOD__);
+            throw new Exception\InvalidArgumentException($message);
+        }
+        $this->name = $name;
+
+        if (null !== $type && !is_string($type)) {
+            $message = sprintf('Invalid client media type provided for "%s"; must be null or a string', __METHOD__);
+            throw new Exception\InvalidArgumentException($message);
+        }
+        $this->type = $type;
+    }
 
     /**
      * Retrieve a stream representing the uploaded file.
@@ -33,7 +120,17 @@ class UploadedFile implements UploadedFileInterface
      */
     public function getStream()
     {
-        
+        if ($this->moved) {
+            $message = 'Cannot retrieve stream after it has already been moved.';
+            throw new Exception\RuntimeException($message);
+        }
+
+        if ($this->stream instanceof StreamInterface) {
+            return $this->stream;
+        }
+
+        $this->stream = new Stream($this->file);
+        return $this->stream;
     }
 
     /**
@@ -70,7 +167,29 @@ class UploadedFile implements UploadedFileInterface
      */
     public function moveTo($targetPath)
     {
-        
+        if (!is_string($targetPath)) {
+            $message = 'Invalid path provided for move operation; must be a string.';
+            throw new Exception\InvalidArgumentException($message);
+        }
+
+        if (empty($targetPath)) {
+            $message = 'Invalid path provided for move operation; must be a non-empty string.';
+            throw new Exception\InvalidArgumentException($message);
+        }
+
+        if ($this->moved) {
+            $message = 'Cannot move file; already moved!.';
+            throw new Exception\RuntimeException($message);
+        }
+
+        if (!$this->file || false === move_uploaded_file($this->file, $targetPath)) {
+            $this->writeFile($targetPath);
+            if ($this->file && is_writable($this->file)) {
+                unlink($this->file);
+            }
+        }
+
+        $this->moved = true;
     }
 
     /**
@@ -84,7 +203,7 @@ class UploadedFile implements UploadedFileInterface
      */
     public function getSize()
     {
-        
+        return $this->size;
     }
 
     /**
@@ -103,7 +222,7 @@ class UploadedFile implements UploadedFileInterface
      */
     public function getError()
     {
-        
+        return $this->error;
     }
 
     /**
@@ -121,7 +240,7 @@ class UploadedFile implements UploadedFileInterface
      */
     public function getClientFilename()
     {
-        
+        return $this->name;
     }
 
     /**
@@ -139,6 +258,28 @@ class UploadedFile implements UploadedFileInterface
      */
     public function getClientMediaType()
     {
-        
+        return $this->type;
+    }
+
+    /**
+     * Write internal stream to given path
+     *
+     * @param string $path
+     */
+    private function writeFile($path)
+    {
+        if (false === $handle = fopen($path, 'wb+')) {
+            $message = sprintf('Unable to write to "%s".', $path);
+            throw new Exception\RuntimeException($message);
+        }
+
+        $stream = $this->getStream();
+        $stream->rewind();
+
+        while (!$stream->eof()) {
+            fwrite($handle, $this->stream->read(4096));
+        }
+
+        fclose($handle);
     }
 }
