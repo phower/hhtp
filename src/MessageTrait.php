@@ -11,7 +11,6 @@
 
 namespace Phower\Http;
 
-use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -32,15 +31,11 @@ trait MessageTrait
 {
 
     /**
-     * List of all registered headers, as key => array of values.
-     *
      * @var array
      */
     protected $headers = [];
 
     /**
-     * Map of normalized header name to original name used to register header.
-     *
      * @var array
      */
     protected $headerNames = [];
@@ -82,9 +77,9 @@ trait MessageTrait
      */
     public function withProtocolVersion($version)
     {
-        $new = clone $this;
-        $new->protocol = $version;
-        return $new;
+        $clone = clone $this;
+        $clone->protocol = $version;
+        return $clone;
     }
 
     /**
@@ -127,7 +122,7 @@ trait MessageTrait
      */
     public function hasHeader($name)
     {
-        return array_key_exists(strtolower($header), $this->headerNames);
+        return array_key_exists(strtolower($name), $this->headerNames);
     }
 
     /**
@@ -146,13 +141,13 @@ trait MessageTrait
      */
     public function getHeader($name)
     {
-        if (!$this->hasHeader($header)) {
+        if (!$this->hasHeader($name)) {
             return [];
         }
 
-        $header = $this->headerNames[strtolower($header)];
+        $name = $this->headerNames[strtolower($name)];
 
-        $value = $this->headers[$header];
+        $value = $this->headers[$name];
         $value = is_array($value) ? $value : [$value];
 
         return $value;
@@ -179,7 +174,7 @@ trait MessageTrait
      */
     public function getHeaderLine($name)
     {
-        $value = $this->getHeader($header);
+        $value = $this->getHeader($name);
         if (empty($value)) {
             return null;
         }
@@ -209,22 +204,21 @@ trait MessageTrait
         }
 
         if (!is_array($value) || !$this->arrayContainsOnlyStrings($value)) {
-            throw new InvalidArgumentException(
-                'Invalid header value; must be a string or array of strings'
-            );
+            $message = 'Invalid header value; must be a string or array of strings';
+            throw new Exception\InvalidArgumentException($message);
         }
 
-        HeaderSecurity::assertValidName($header);
+        HeaderSecurity::assertValidName($name);
         self::assertValidHeaderValue($value);
 
-        $normalized = strtolower($header);
+        $normalized = strtolower($name);
 
-        $new = clone $this;
+        $clone = clone $this;
 
-        $new->headerNames[$normalized] = $header;
-        $new->headers[$header] = $value;
+        $clone->headerNames[$normalized] = $name;
+        $clone->headers[$name] = $value;
 
-        return $new;
+        return $clone;
     }
 
     /**
@@ -250,25 +244,24 @@ trait MessageTrait
         }
 
         if (!is_array($value) || !$this->arrayContainsOnlyStrings($value)) {
-            throw new InvalidArgumentException(
-                'Invalid header value; must be a string or array of strings'
-            );
+            $message = 'Invalid header value; must be a string or array of strings';
+            throw new Exception\InvalidArgumentException($message);
         }
 
-        HeaderSecurity::assertValidName($header);
+        HeaderSecurity::assertValidName($name);
         self::assertValidHeaderValue($value);
 
-        if (!$this->hasHeader($header)) {
-            return $this->withHeader($header, $value);
+        if (!$this->hasHeader($name)) {
+            return $this->withHeader($name, $value);
         }
 
-        $normalized = strtolower($header);
-        $header = $this->headerNames[$normalized];
+        $normalized = strtolower($name);
+        $name = $this->headerNames[$normalized];
 
-        $new = clone $this;
-        $new->headers[$header] = array_merge($this->headers[$header], $value);
+        $clone = clone $this;
+        $clone->headers[$name] = array_merge($this->headers[$name], $value);
 
-        return $new;
+        return $clone;
     }
 
     /**
@@ -285,17 +278,17 @@ trait MessageTrait
      */
     public function withoutHeader($name)
     {
-        if (!$this->hasHeader($header)) {
+        if (!$this->hasHeader($name)) {
             return clone $this;
         }
 
-        $normalized = strtolower($header);
+        $normalized = strtolower($name);
         $original = $this->headerNames[$normalized];
 
-        $new = clone $this;
-        unset($new->headers[$original], $new->headerNames[$normalized]);
+        $clone = clone $this;
+        unset($clone->headers[$original], $clone->headerNames[$normalized]);
 
-        return $new;
+        return $clone;
     }
 
     /**
@@ -323,10 +316,10 @@ trait MessageTrait
      */
     public function withBody(StreamInterface $body)
     {
-        $new = clone $this;
-        $new->stream = $body;
+        $clone = clone $this;
+        $clone->stream = $body;
 
-        return $new;
+        return $clone;
     }
 
     /**
@@ -337,7 +330,12 @@ trait MessageTrait
      */
     private function arrayContainsOnlyStrings(array $array)
     {
-        return array_reduce($array, [__CLASS__, 'filterStringValue'], true);
+        return array_reduce($array, function($carry, $item) {
+            if (!is_string($item)) {
+                return false;
+            }
+            return $carry;
+        }, true);
     }
 
     /**
@@ -351,8 +349,9 @@ trait MessageTrait
     private function filterHeaders(array $originalHeaders)
     {
         $headerNames = $headers = [];
-        foreach ($originalHeaders as $header => $value) {
-            if (!is_string($header)) {
+        
+        foreach ($originalHeaders as $name => $value) {
+            if (!is_string($name)) {
                 continue;
             }
 
@@ -364,28 +363,11 @@ trait MessageTrait
                 $value = [$value];
             }
 
-            $headerNames[strtolower($header)] = $header;
-            $headers[$header] = $value;
+            $headerNames[strtolower($name)] = $name;
+            $headers[$name] = $value;
         }
 
         return [$headerNames, $headers];
-    }
-
-    /**
-     * Test if a value is a string
-     *
-     * Used with array_reduce.
-     *
-     * @param bool $carry
-     * @param mixed $item
-     * @return bool
-     */
-    private static function filterStringValue($carry, $item)
-    {
-        if (!is_string($item)) {
-            return false;
-        }
-        return $carry;
     }
 
     /**
@@ -399,4 +381,5 @@ trait MessageTrait
     {
         array_walk($values, __NAMESPACE__ . '\HeaderSecurity::assertValid');
     }
+
 }
