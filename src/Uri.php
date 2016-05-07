@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Phower Http
+ *
+ * @version 0.0.0
+ * @link https://github.com/phower/http Public Git repository
+ * @copyright (c) 2015-2016, Pedro Ferreira <https://phower.com>
+ * @license https://opensource.org/licenses/MIT MIT
+ */
+
 namespace Phower\Http;
 
 use Psr\Http\Message\UriInterface;
@@ -24,6 +33,8 @@ use Phower\Http\Exception;
  * server parameters.
  *
  * @link http://tools.ietf.org/html/rfc3986 (the URI specification)
+ *
+ * @author Pedro Ferreira <pedro@phower.com>
  */
 class Uri implements UriInterface
 {

@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Phower Http
+ *
+ * @version 0.0.0
+ * @link https://github.com/phower/http Public Git repository
+ * @copyright (c) 2015-2016, Pedro Ferreira <https://phower.com>
+ * @license https://opensource.org/licenses/MIT MIT
+ */
+
 namespace Phower\Http;
 
 use Psr\Http\Message\MessageInterface;
@@ -16,9 +25,35 @@ use Psr\Http\Message\StreamInterface;
  *
  * @link http://www.ietf.org/rfc/rfc7230.txt
  * @link http://www.ietf.org/rfc/rfc7231.txt
+ *
+ * @author Pedro Ferreira <pedro@phower.com>
  */
-class Message implements MessageInterface
+trait MessageTrait
 {
+
+    /**
+     * List of all registered headers, as key => array of values.
+     *
+     * @var array
+     */
+    protected $headers = [];
+
+    /**
+     * Map of normalized header name to original name used to register header.
+     *
+     * @var array
+     */
+    protected $headerNames = [];
+
+    /**
+     * @var string
+     */
+    private $protocol = '1.1';
+
+    /**
+     * @var StreamInterface
+     */
+    private $stream;
 
     /**
      * Retrieves the HTTP protocol version as a string.
@@ -29,7 +64,7 @@ class Message implements MessageInterface
      */
     public function getProtocolVersion()
     {
-        
+        return $this->protocol;
     }
 
     /**
@@ -47,7 +82,9 @@ class Message implements MessageInterface
      */
     public function withProtocolVersion($version)
     {
-        
+        $new = clone $this;
+        $new->protocol = $version;
+        return $new;
     }
 
     /**
@@ -77,7 +114,7 @@ class Message implements MessageInterface
      */
     public function getHeaders()
     {
-        
+        return $this->headers;
     }
 
     /**
@@ -90,7 +127,7 @@ class Message implements MessageInterface
      */
     public function hasHeader($name)
     {
-        
+        return array_key_exists(strtolower($header), $this->headerNames);
     }
 
     /**
@@ -109,7 +146,16 @@ class Message implements MessageInterface
      */
     public function getHeader($name)
     {
-        
+        if (!$this->hasHeader($header)) {
+            return [];
+        }
+
+        $header = $this->headerNames[strtolower($header)];
+
+        $value = $this->headers[$header];
+        $value = is_array($value) ? $value : [$value];
+
+        return $value;
     }
 
     /**
@@ -133,7 +179,12 @@ class Message implements MessageInterface
      */
     public function getHeaderLine($name)
     {
-        
+        $value = $this->getHeader($header);
+        if (empty($value)) {
+            return null;
+        }
+
+        return implode(',', $value);
     }
 
     /**
@@ -153,7 +204,27 @@ class Message implements MessageInterface
      */
     public function withHeader($name, $value)
     {
-        
+        if (is_string($value)) {
+            $value = [$value];
+        }
+
+        if (!is_array($value) || !$this->arrayContainsOnlyStrings($value)) {
+            throw new InvalidArgumentException(
+                'Invalid header value; must be a string or array of strings'
+            );
+        }
+
+        HeaderSecurity::assertValidName($header);
+        self::assertValidHeaderValue($value);
+
+        $normalized = strtolower($header);
+
+        $new = clone $this;
+
+        $new->headerNames[$normalized] = $header;
+        $new->headers[$header] = $value;
+
+        return $new;
     }
 
     /**
@@ -174,7 +245,30 @@ class Message implements MessageInterface
      */
     public function withAddedHeader($name, $value)
     {
-        
+        if (is_string($value)) {
+            $value = [$value];
+        }
+
+        if (!is_array($value) || !$this->arrayContainsOnlyStrings($value)) {
+            throw new InvalidArgumentException(
+                'Invalid header value; must be a string or array of strings'
+            );
+        }
+
+        HeaderSecurity::assertValidName($header);
+        self::assertValidHeaderValue($value);
+
+        if (!$this->hasHeader($header)) {
+            return $this->withHeader($header, $value);
+        }
+
+        $normalized = strtolower($header);
+        $header = $this->headerNames[$normalized];
+
+        $new = clone $this;
+        $new->headers[$header] = array_merge($this->headers[$header], $value);
+
+        return $new;
     }
 
     /**
@@ -191,7 +285,17 @@ class Message implements MessageInterface
      */
     public function withoutHeader($name)
     {
-        
+        if (!$this->hasHeader($header)) {
+            return clone $this;
+        }
+
+        $normalized = strtolower($header);
+        $original = $this->headerNames[$normalized];
+
+        $new = clone $this;
+        unset($new->headers[$original], $new->headerNames[$normalized]);
+
+        return $new;
     }
 
     /**
@@ -201,7 +305,7 @@ class Message implements MessageInterface
      */
     public function getBody()
     {
-        
+        return $this->stream;
     }
 
     /**
@@ -219,6 +323,80 @@ class Message implements MessageInterface
      */
     public function withBody(StreamInterface $body)
     {
-        
+        $new = clone $this;
+        $new->stream = $body;
+
+        return $new;
+    }
+
+    /**
+     * Test that an array contains only strings
+     *
+     * @param array $array
+     * @return bool
+     */
+    private function arrayContainsOnlyStrings(array $array)
+    {
+        return array_reduce($array, [__CLASS__, 'filterStringValue'], true);
+    }
+
+    /**
+     * Filter a set of headers to ensure they are in the correct internal format.
+     *
+     * Used by message constructors to allow setting all initial headers at once.
+     *
+     * @param array $originalHeaders Headers to filter.
+     * @return array Filtered headers and names.
+     */
+    private function filterHeaders(array $originalHeaders)
+    {
+        $headerNames = $headers = [];
+        foreach ($originalHeaders as $header => $value) {
+            if (!is_string($header)) {
+                continue;
+            }
+
+            if (!is_array($value) && !is_string($value)) {
+                continue;
+            }
+
+            if (!is_array($value)) {
+                $value = [$value];
+            }
+
+            $headerNames[strtolower($header)] = $header;
+            $headers[$header] = $value;
+        }
+
+        return [$headerNames, $headers];
+    }
+
+    /**
+     * Test if a value is a string
+     *
+     * Used with array_reduce.
+     *
+     * @param bool $carry
+     * @param mixed $item
+     * @return bool
+     */
+    private static function filterStringValue($carry, $item)
+    {
+        if (!is_string($item)) {
+            return false;
+        }
+        return $carry;
+    }
+
+    /**
+     * Assert that the provided header values are valid.
+     *
+     * @see http://tools.ietf.org/html/rfc7230#section-3.2
+     * @param string[] $values
+     * @throws InvalidArgumentException
+     */
+    private static function assertValidHeaderValue(array $values)
+    {
+        array_walk($values, __NAMESPACE__ . '\HeaderSecurity::assertValid');
     }
 }

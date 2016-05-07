@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Phower Http
+ *
+ * @version 0.0.0
+ * @link https://github.com/phower/http Public Git repository
+ * @copyright (c) 2015-2016, Pedro Ferreira <https://phower.com>
+ * @license https://opensource.org/licenses/MIT MIT
+ */
+
 namespace Phower\Http;
 
 use Psr\Http\Message\StreamInterface;
@@ -10,6 +19,8 @@ use Psr\Http\Message\StreamInterface;
  * Typically, an instance will wrap a PHP stream; this interface provides
  * a wrapper around the most common operations, including serialization of
  * the entire stream to a string.
+ *
+ * @author Pedro Ferreira <pedro@phower.com>
  */
 class Stream implements StreamInterface
 {

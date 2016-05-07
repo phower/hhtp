@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Phower Http
+ *
+ * @version 0.0.0
+ * @link https://github.com/phower/http Public Git repository
+ * @copyright (c) 2015-2016, Pedro Ferreira <https://phower.com>
+ * @license https://opensource.org/licenses/MIT MIT
+ */
+
 namespace Phower\Http;
 
 use Psr\Http\Message\ServerRequestInterface;
@@ -43,6 +52,8 @@ use Psr\Http\Message\UriInterface;
  * Requests are considered immutable; all methods that might change state MUST
  * be implemented such that they retain the internal state of the current
  * message and return an instance that contains the changed state.
+ *
+ * @author Pedro Ferreira <pedro@phower.com>
  */
 class ServerRequest implements ServerRequestInterface
 {
@@ -56,7 +67,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getProtocolVersion()
     {
-        
+
     }
 
     /**
@@ -74,7 +85,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withProtocolVersion($version)
     {
-        
+
     }
 
     /**
@@ -104,7 +115,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getHeaders()
     {
-        
+
     }
 
     /**
@@ -117,7 +128,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function hasHeader($name)
     {
-        
+
     }
 
     /**
@@ -136,7 +147,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getHeader($name)
     {
-        
+
     }
 
     /**
@@ -160,7 +171,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getHeaderLine($name)
     {
-        
+
     }
 
     /**
@@ -180,7 +191,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withHeader($name, $value)
     {
-        
+
     }
 
     /**
@@ -201,7 +212,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withAddedHeader($name, $value)
     {
-        
+
     }
 
     /**
@@ -218,7 +229,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withoutHeader($name)
     {
-        
+
     }
 
     /**
@@ -228,7 +239,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getBody()
     {
-        
+
     }
 
     /**
@@ -246,7 +257,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withBody(StreamInterface $body)
     {
-        
+
     }
 
     /**
@@ -267,7 +278,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getRequestTarget()
     {
-        
+
     }
 
     /**
@@ -289,7 +300,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withRequestTarget($requestTarget)
     {
-        
+
     }
 
     /**
@@ -299,7 +310,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getMethod()
     {
-        
+
     }
 
     /**
@@ -319,7 +330,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withMethod($method)
     {
-        
+
     }
 
     /**
@@ -333,7 +344,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getUri()
     {
-        
+
     }
 
     /**
@@ -368,7 +379,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withUri(UriInterface $uri, $preserveHost = false)
     {
-        
+
     }
 
     /**
@@ -382,7 +393,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getServerParams()
     {
-        
+
     }
 
     /**
@@ -397,7 +408,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getCookieParams()
     {
-        
+
     }
 
     /**
@@ -419,7 +430,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withCookieParams(array $cookies)
     {
-        
+
     }
 
     /**
@@ -436,7 +447,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getQueryParams()
     {
-        
+
     }
 
     /**
@@ -463,7 +474,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withQueryParams(array $query)
     {
-        
+
     }
 
     /**
@@ -480,7 +491,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getUploadedFiles()
     {
-        
+
     }
 
     /**
@@ -496,7 +507,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withUploadedFiles(array $uploadedFiles)
     {
-        
+
     }
 
     /**
@@ -516,7 +527,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getParsedBody()
     {
-        
+
     }
 
     /**
@@ -549,7 +560,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withParsedBody($data)
     {
-        
+
     }
 
     /**
@@ -565,7 +576,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getAttributes()
     {
-        
+
     }
 
     /**
@@ -585,7 +596,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getAttribute($name, $default = null)
     {
-        
+
     }
 
     /**
@@ -605,7 +616,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withAttribute($name, $value)
     {
-        
+
     }
 
     /**
@@ -624,6 +635,6 @@ class ServerRequest implements ServerRequestInterface
      */
     public function withoutAttribute($name)
     {
-        
+
     }
 }

@@ -1,7 +1,21 @@
 <?php
 
+/**
+ * Phower Http
+ *
+ * @version 0.0.0
+ * @link https://github.com/phower/http Public Git repository
+ * @copyright (c) 2015-2016, Pedro Ferreira <https://phower.com>
+ * @license https://opensource.org/licenses/MIT MIT
+ */
+
 namespace Phower\Http;
 
+/**
+ * Hacked version of fseek function, used only for tests.
+ *
+ * @author Pedro Ferreira <pedro@phower.com>
+ */
 function fseek($handle, $offset, $whence = SEEK_SET)
 {
     if (\PhowerTest\Http\StreamTest::$fseekReturns !== null) {
@@ -10,6 +24,11 @@ function fseek($handle, $offset, $whence = SEEK_SET)
     return \fseek($handle, $offset, $whence = SEEK_SET);
 }
 
+/**
+ * Hacked version of fread function, used only for tests.
+ *
+ * @author Pedro Ferreira <pedro@phower.com>
+ */
 function fread($handle, $length)
 {
     if (\PhowerTest\Http\StreamTest::$freadReturns !== null) {
@@ -18,6 +37,11 @@ function fread($handle, $length)
     return \fread($handle, $length);
 }
 
+/**
+ * Hacked version of ftell function, used only for tests.
+ *
+ * @author Pedro Ferreira <pedro@phower.com>
+ */
 function ftell($handle)
 {
     if (\PhowerTest\Http\StreamTest::$ftellReturns !== null) {
@@ -26,6 +50,11 @@ function ftell($handle)
     return \ftell($handle);
 }
 
+/**
+ * Hacked version of fwrite function, used only for tests.
+ *
+ * @author Pedro Ferreira <pedro@phower.com>
+ */
 function fwrite($handle, $string, $length = null)
 {
     if (\PhowerTest\Http\StreamTest::$fwriteReturns !== null) {
@@ -35,6 +64,11 @@ function fwrite($handle, $string, $length = null)
     return \fwrite($handle, $string, $length);
 }
 
+/**
+ * Hacked version of stream_get_contents function, used only for tests.
+ *
+ * @author Pedro Ferreira <pedro@phower.com>
+ */
 function stream_get_contents($handle, $maxlength = -1, $offset = -1)
 {
     if (\PhowerTest\Http\StreamTest::$streamGetContentsReturns !== null) {
@@ -43,6 +77,11 @@ function stream_get_contents($handle, $maxlength = -1, $offset = -1)
     return \stream_get_contents($handle, $maxlength, $offset);
 }
 
+/**
+ * Hacked version of stream_get_meta_data function, used only for tests.
+ *
+ * @author Pedro Ferreira <pedro@phower.com>
+ */
 function stream_get_meta_data($stream)
 {
     if (\PhowerTest\Http\StreamTest::$streamGetMetaDataReturns !== null) {
@@ -53,6 +92,11 @@ function stream_get_meta_data($stream)
 
 namespace PhowerTest\Http;
 
+/**
+ * Stream class test case.
+ *
+ * @author Pedro Ferreira <pedro@phower.com>
+ */
 class StreamTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -375,5 +419,4 @@ class StreamTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(__FILE__, $stream->getMetadata('uri'));
         $this->assertNull($stream->getMetadata('invalid key'));
     }
-
 }

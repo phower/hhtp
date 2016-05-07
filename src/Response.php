@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Phower Http
+ *
+ * @version 0.0.0
+ * @link https://github.com/phower/http Public Git repository
+ * @copyright (c) 2015-2016, Pedro Ferreira <https://phower.com>
+ * @license https://opensource.org/licenses/MIT MIT
+ */
+
 namespace Phower\Http;
 
 use Psr\Http\Message\ResponseInterface;
@@ -19,6 +28,8 @@ use Psr\Http\Message\StreamInterface;
  * Responses are considered immutable; all methods that might change state MUST
  * be implemented such that they retain the internal state of the current
  * message and return an instance that contains the changed state.
+ *
+ * @author Pedro Ferreira <pedro@phower.com>
  */
 class Response implements ResponseInterface
 {
@@ -32,7 +43,7 @@ class Response implements ResponseInterface
      */
     public function getProtocolVersion()
     {
-        
+
     }
 
     /**
@@ -50,7 +61,7 @@ class Response implements ResponseInterface
      */
     public function withProtocolVersion($version)
     {
-        
+
     }
 
     /**
@@ -80,7 +91,7 @@ class Response implements ResponseInterface
      */
     public function getHeaders()
     {
-        
+
     }
 
     /**
@@ -93,7 +104,7 @@ class Response implements ResponseInterface
      */
     public function hasHeader($name)
     {
-        
+
     }
 
     /**
@@ -112,7 +123,7 @@ class Response implements ResponseInterface
      */
     public function getHeader($name)
     {
-        
+
     }
 
     /**
@@ -136,7 +147,7 @@ class Response implements ResponseInterface
      */
     public function getHeaderLine($name)
     {
-        
+
     }
 
     /**
@@ -156,7 +167,7 @@ class Response implements ResponseInterface
      */
     public function withHeader($name, $value)
     {
-        
+
     }
 
     /**
@@ -177,7 +188,7 @@ class Response implements ResponseInterface
      */
     public function withAddedHeader($name, $value)
     {
-        
+
     }
 
     /**
@@ -194,7 +205,7 @@ class Response implements ResponseInterface
      */
     public function withoutHeader($name)
     {
-        
+
     }
 
     /**
@@ -204,7 +215,7 @@ class Response implements ResponseInterface
      */
     public function getBody()
     {
-        
+
     }
 
     /**
@@ -222,7 +233,7 @@ class Response implements ResponseInterface
      */
     public function withBody(StreamInterface $body)
     {
-        
+
     }
 
     /**
@@ -235,7 +246,7 @@ class Response implements ResponseInterface
      */
     public function getStatusCode()
     {
-        
+
     }
 
     /**
@@ -260,7 +271,7 @@ class Response implements ResponseInterface
      */
     public function withStatus($code, $reasonPhrase = '')
     {
-        
+
     }
 
     /**
@@ -278,6 +289,6 @@ class Response implements ResponseInterface
      */
     public function getReasonPhrase()
     {
-        
+
     }
 }

@@ -9,14 +9,14 @@
  * @license https://opensource.org/licenses/MIT MIT
  */
 
-namespace Phower\Http\Exception;
+namespace PhowerTest\Http;
 
 /**
- * Invalid argument exception.
+ * Message trait test case.
  *
  * @author Pedro Ferreira <pedro@phower.com>
  */
-class InvalidArgumentException extends \InvalidArgumentException implements HttpExceptionInterface
+class MessageTraitTest extends \PHPUnit_Framework_TestCase
 {
 
 }

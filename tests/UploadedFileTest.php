@@ -1,7 +1,21 @@
 <?php
 
+/**
+ * Phower Http
+ *
+ * @version 0.0.0
+ * @link https://github.com/phower/http Public Git repository
+ * @copyright (c) 2015-2016, Pedro Ferreira <https://phower.com>
+ * @license https://opensource.org/licenses/MIT MIT
+ */
+
 namespace Phower\Http;
 
+/**
+ * Hacked version of fopen function, used only for tests.
+ *
+ * @author Pedro Ferreira <pedro@phower.com>
+ */
 function fopen($filename, $mode, $use_include_path = false, $context = null)
 {
     if (\PhowerTest\Http\UploadedFileTest::$fopenReturns !== null) {
@@ -15,6 +29,11 @@ function fopen($filename, $mode, $use_include_path = false, $context = null)
 
 namespace PhowerTest\Http;
 
+/**
+ * Uploaded file class test case.
+ *
+ * @author Pedro Ferreira <pedro@phower.com>
+ */
 class UploadedFileTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -203,5 +222,4 @@ class UploadedFileTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(\Phower\Http\Exception\RuntimeException::class);
         $upload->getStream();
     }
-
 }

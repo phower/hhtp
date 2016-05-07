@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Phower Http
+ *
+ * @version 0.0.0
+ * @link https://github.com/phower/http Public Git repository
+ * @copyright (c) 2015-2016, Pedro Ferreira <https://phower.com>
+ * @license https://opensource.org/licenses/MIT MIT
+ */
+
 namespace Phower\Http;
 
 use Psr\Http\Message\RequestInterface;
@@ -24,6 +33,8 @@ use Psr\Http\Message\UriInterface;
  * Requests are considered immutable; all methods that might change state MUST
  * be implemented such that they retain the internal state of the current
  * message and return an instance that contains the changed state.
+ *
+ * @author Pedro Ferreira <pedro@phower.com>
  */
 class Request implements RequestInterface
 {
@@ -37,7 +48,7 @@ class Request implements RequestInterface
      */
     public function getProtocolVersion()
     {
-        
+
     }
 
     /**
@@ -55,7 +66,7 @@ class Request implements RequestInterface
      */
     public function withProtocolVersion($version)
     {
-        
+
     }
 
     /**
@@ -85,7 +96,7 @@ class Request implements RequestInterface
      */
     public function getHeaders()
     {
-        
+
     }
 
     /**
@@ -98,7 +109,7 @@ class Request implements RequestInterface
      */
     public function hasHeader($name)
     {
-        
+
     }
 
     /**
@@ -117,7 +128,7 @@ class Request implements RequestInterface
      */
     public function getHeader($name)
     {
-        
+
     }
 
     /**
@@ -141,7 +152,7 @@ class Request implements RequestInterface
      */
     public function getHeaderLine($name)
     {
-        
+
     }
 
     /**
@@ -161,7 +172,7 @@ class Request implements RequestInterface
      */
     public function withHeader($name, $value)
     {
-        
+
     }
 
     /**
@@ -182,7 +193,7 @@ class Request implements RequestInterface
      */
     public function withAddedHeader($name, $value)
     {
-        
+
     }
 
     /**
@@ -199,7 +210,7 @@ class Request implements RequestInterface
      */
     public function withoutHeader($name)
     {
-        
+
     }
 
     /**
@@ -209,7 +220,7 @@ class Request implements RequestInterface
      */
     public function getBody()
     {
-        
+
     }
 
     /**
@@ -227,7 +238,7 @@ class Request implements RequestInterface
      */
     public function withBody(StreamInterface $body)
     {
-        
+
     }
 
     /**
@@ -248,7 +259,7 @@ class Request implements RequestInterface
      */
     public function getRequestTarget()
     {
-        
+
     }
 
     /**
@@ -270,7 +281,7 @@ class Request implements RequestInterface
      */
     public function withRequestTarget($requestTarget)
     {
-        
+
     }
 
     /**
@@ -280,7 +291,7 @@ class Request implements RequestInterface
      */
     public function getMethod()
     {
-        
+
     }
 
     /**
@@ -300,7 +311,7 @@ class Request implements RequestInterface
      */
     public function withMethod($method)
     {
-        
+
     }
 
     /**
@@ -314,7 +325,7 @@ class Request implements RequestInterface
      */
     public function getUri()
     {
-        
+
     }
 
     /**
@@ -349,6 +360,6 @@ class Request implements RequestInterface
      */
     public function withUri(UriInterface $uri, $preserveHost = false)
     {
-        
+
     }
 }
