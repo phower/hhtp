@@ -330,7 +330,7 @@ trait MessageTrait
      */
     private function arrayContainsOnlyStrings(array $array)
     {
-        return array_reduce($array, function($carry, $item) {
+        return array_reduce($array, function ($carry, $item) {
             if (!is_string($item)) {
                 return false;
             }
@@ -349,7 +349,7 @@ trait MessageTrait
     private function filterHeaders(array $originalHeaders)
     {
         $headerNames = $headers = [];
-        
+
         foreach ($originalHeaders as $name => $value) {
             if (!is_string($name)) {
                 continue;
@@ -381,5 +381,4 @@ trait MessageTrait
     {
         array_walk($values, __NAMESPACE__ . '\HeaderSecurity::assertValid');
     }
-
 }

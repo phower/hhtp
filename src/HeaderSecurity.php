@@ -11,8 +11,6 @@
 
 namespace Phower\Http;
 
-use Phower\Http\Exception\InvalidArgumentException;
-
 /**
  * Provide security tools around HTTP headers to prevent common injection vectors.
  *
@@ -31,7 +29,7 @@ final class HeaderSecurity
      */
     private function __construct()
     {
-        
+        // do nothing
     }
 
     /**
@@ -63,6 +61,7 @@ final class HeaderSecurity
             if ($ascii === 13) {
                 $lf = ord($value[$i + 1]);
                 $ws = ord($value[$i + 2]);
+
                 if ($lf === 10 && in_array($ws, [9, 32], true)) {
                     $string .= $value[$i] . $value[$i + 1];
                     $i += 1;
@@ -127,13 +126,13 @@ final class HeaderSecurity
      * Assert a header value is valid.
      *
      * @param string $value
-     * @throws InvalidArgumentException for invalid values
+     * @throws Exception\InvalidArgumentException for invalid values
      */
     public static function assertValid($value)
     {
         if (!self::isValid($value)) {
             $message = sprintf('"%s" is not valid header value', $value);
-            throw new InvalidArgumentException($message);
+            throw new Exception\InvalidArgumentException($message);
         }
     }
 
@@ -142,14 +141,13 @@ final class HeaderSecurity
      *
      * @see http://tools.ietf.org/html/rfc7230#section-3.2
      * @param mixed $name
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgumentException
      */
     public static function assertValidName($name)
     {
         if (!preg_match('/^[a-zA-Z0-9\'`#$%&*+.^_|~!-]+$/', $name)) {
             $message = sprintf('"%s" is not valid header name', $name);
-            throw new InvalidArgumentException($message);
+            throw new Exception\InvalidArgumentException($message);
         }
     }
-
 }

@@ -129,5 +129,4 @@ class MessageTraitTest extends \PHPUnit_Framework_TestCase
         $clone = $trait->withBody($body);
         $this->assertSame($body, $clone->getBody());
     }
-
 }
