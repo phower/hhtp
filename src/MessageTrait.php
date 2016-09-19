@@ -343,14 +343,14 @@ trait MessageTrait
      *
      * Used by message constructors to allow setting all initial headers at once.
      *
-     * @param array $originalHeaders Headers to filter.
+     * @param array $headers Headers to filter.
      * @return array Filtered headers and names.
      */
-    private function filterHeaders(array $originalHeaders)
+    private function filterHeaders(array $headers)
     {
-        $headerNames = $headers = [];
+        $names = $values = [];
 
-        foreach ($originalHeaders as $name => $value) {
+        foreach ($headers as $name => $value) {
             if (!is_string($name)) {
                 continue;
             }
@@ -363,11 +363,11 @@ trait MessageTrait
                 $value = [$value];
             }
 
-            $headerNames[strtolower($name)] = $name;
-            $headers[$name] = $value;
+            $names[strtolower($name)] = $name;
+            $values[$name] = $value;
         }
 
-        return [$headerNames, $headers];
+        return [$names, $values];
     }
 
     /**

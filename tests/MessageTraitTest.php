@@ -124,7 +124,8 @@ class MessageTraitTest extends \PHPUnit_Framework_TestCase
     public function testWithBody()
     {
         $trait = $this->getMockForTrait(\Phower\Http\MessageTrait::class);
-        $body = $this->getMock(\Psr\Http\Message\StreamInterface::class);
+        $body = $this->getMockBuilder(\Psr\Http\Message\StreamInterface::class)
+                ->getMock();
 
         $clone = $trait->withBody($body);
         $this->assertSame($body, $clone->getBody());
