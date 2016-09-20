@@ -64,32 +64,32 @@ class ServerRequest implements ServerRequestInterface
     /**
      * @var array
      */
-    private $attributes;
+    private $attributes = [];
 
     /**
      * @var array
      */
-    private $cookieParams;
+    private $cookieParams = [];
 
     /**
      * @var array
      */
-    private $parsedBody;
+    private $parsedBody = [];
 
     /**
      * @var array
      */
-    private $queryParams;
+    private $queryParams = [];
 
     /**
      * @var array
      */
-    private $serverParams;
+    private $serverParams = [];
 
     /**
      * @var array
      */
-    private $uploadedFiles;
+    private $uploadedFiles = [];
 
     /**
      * Create new server request
@@ -106,7 +106,7 @@ class ServerRequest implements ServerRequestInterface
     {
         $this->validateUploadedFiles($files);
 
-        $this->init($uri, $body, $body, $headers);
+        $this->init($uri, $method, $body, $headers);
 
         $this->serverParams = $server;
         $this->uploadedFiles = $files;
