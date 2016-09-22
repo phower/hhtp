@@ -43,7 +43,7 @@ class Response implements ResponseInterface
      * @link https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
      * @var array
      */
-    private $phrases = array(
+    private $phrases = [
         // INFORMATIONAL CODES
         100 => 'Continue',
         101 => 'Switching Protocols',
@@ -106,7 +106,7 @@ class Response implements ResponseInterface
         507 => 'Insufficient Storage',
         508 => 'Loop Detected',
         511 => 'Network Authentication Required',
-    );
+    ];
 
     /**
      * @var string
@@ -201,13 +201,13 @@ class Response implements ResponseInterface
         if (!$this->reasonPhrase && isset($this->phrases[$this->statusCode])) {
             $this->reasonPhrase = $this->phrases[$this->statusCode];
         }
-        
+
         return $this->reasonPhrase;
     }
 
     /**
      * Validate a status code.
-     * 
+     *
      * @param int $code
      * @throws Exception\InvalidArgumentException
      */
@@ -232,5 +232,4 @@ class Response implements ResponseInterface
             array_walk($headerValues, __NAMESPACE__ . '\HeaderSecurity::assertValid');
         }
     }
-
 }

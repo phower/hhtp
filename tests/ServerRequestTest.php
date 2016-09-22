@@ -118,7 +118,7 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
     {
         $request = new \Phower\Http\ServerRequest();
         $this->assertNull($request->getAttribute('not_set'));
-        
+
         $default = 123;
         $this->assertEquals($default, $request->getAttribute('not_set', $default));
     }
@@ -134,7 +134,7 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNotSame($clone, $request);
         $this->assertEquals($value, $clone->getAttribute($name));
-        
+
         return $clone;
     }
 
@@ -163,5 +163,4 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(\Phower\Http\Exception\InvalidArgumentException::class);
         $request->withUploadedFiles(['not an uploaded file']);
     }
-
 }

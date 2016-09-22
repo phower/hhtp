@@ -294,5 +294,4 @@ trait RequestTrait
 
         return $headers;
     }
-
 }

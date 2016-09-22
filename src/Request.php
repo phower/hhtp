@@ -54,5 +54,4 @@ class Request implements RequestInterface
     {
         $this->init($uri, $method, $body, $headers);
     }
-
 }

@@ -410,5 +410,4 @@ class ServerRequest implements ServerRequestInterface
             }
         }
     }
-
 }

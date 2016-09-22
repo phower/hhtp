@@ -79,5 +79,4 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeEquals($code, 'statusCode', $clone);
         $this->assertAttributeEquals($reasonPhrase, 'reasonPhrase', $clone);
     }
-
 }

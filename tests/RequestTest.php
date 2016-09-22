@@ -92,7 +92,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     {
         $request = new \Phower\Http\Request('/', 'GET');
         $clone = $request->withMethod('POST');
-        
+
         $this->assertInstanceOf(\Phower\Http\Request::class, $clone);
         $this->assertNotSame($clone, $request);
         $this->assertEquals('POST', $clone->getMethod());
@@ -110,7 +110,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $uri = new \Phower\Http\Uri('/some/path');
         $request = new \Phower\Http\Request('/', 'GET');
         $clone = $request->withUri($uri);
-        
+
         $this->assertInstanceOf(\Phower\Http\Request::class, $clone);
         $this->assertNotSame($clone, $request);
         $this->assertEquals($uri, $clone->getUri());
@@ -123,9 +123,9 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $uri = new \Phower\Http\Uri('/some/path');
         $request = new \Phower\Http\Request('/', 'GET');
         $this->assertCount(0, $request->getHeaders());
-        
+
         $clone = $request->withUri($uri->withHost($host)->withPort($port));
-        
+
         $this->assertInstanceOf(\Phower\Http\Request::class, $clone);
         $this->assertNotSame($clone, $request);
         $this->assertCount(1, $clone->getHeaders());
