@@ -163,4 +163,65 @@ class ServerRequestTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(\Phower\Http\Exception\InvalidArgumentException::class);
         $request->withUploadedFiles(['not an uploaded file']);
     }
+
+    public function testCreateFromGlobals()
+    {
+        $request = \Phower\Http\ServerRequest::createFromGlobals();
+
+        $this->assertInstanceOf(\Phower\Http\ServerRequest::class, $request);
+    }
+
+    /**
+     * @dataProvider normalizeFilesProvider
+     * @param array $expected
+     * @param array $files
+     */
+    public function testNormalizeFiles(array $expected, array $files)
+    {
+        $normalized = \Phower\Http\ServerRequest::normalizeFiles($files);
+        $this->assertSame(count($expected), count($normalized));
+        foreach ($normalized as $file) {
+            $this->assertInstanceOf(\Phower\Http\UploadedFile::class, $file);
+        }
+    }
+
+    public function normalizeFilesProvider()
+    {
+        $files = [
+            new \Phower\Http\UploadedFile(sprintf('/tmp/%s', uniqid()), rand(1, 10000), 0),
+            new \Phower\Http\UploadedFile(sprintf('/tmp/%s', uniqid()), rand(1, 10000), 0),
+            new \Phower\Http\UploadedFile(sprintf('/tmp/%s', uniqid()), rand(1, 10000), 0),
+        ];
+
+        return [
+            [[], []],
+            [$files, $files],
+            [
+                [new \Phower\Http\UploadedFile('/tmp/foo', 1000, 0, 'foo', 'text/plain')],
+                [[
+                    'tmp_name' => '/tmp/foo',
+                    'size' => 1000,
+                    'error' => 0,
+                    'name' => 'foo',
+                    'type' => 'text/plain'
+                ]]
+            ],
+            [
+                [new \Phower\Http\UploadedFile('/tmp/foo', 1000, 0, 'foo', 'text/plain')],
+                [[[
+                    'tmp_name' => '/tmp/foo',
+                    'size' => 1000,
+                    'error' => 0,
+                    'name' => 'foo',
+                    'type' => 'text/plain'
+                ]]]
+            ],
+        ];
+    }
+
+    public function testNormalizeFilesRaisesException()
+    {
+        $this->expectException(\Phower\Http\Exception\InvalidArgumentException::class);
+        \Phower\Http\ServerRequest::normalizeFiles([1]);
+    }
 }

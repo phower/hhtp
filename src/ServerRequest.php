@@ -112,6 +112,67 @@ class ServerRequest implements ServerRequestInterface
         $this->uploadedFiles = $files;
     }
 
+    public static function createFromGlobals(array $server = null, array $cookie = null, array $get = null, array $post = null, array $files = null)
+    {
+        if (null === $server) {
+            $server = $_SERVER;
+        }
+
+        if (null === $cookie) {
+            $cookie = $_COOKIE;
+        }
+
+        if (null === $get) {
+            $get = $_GET;
+        }
+
+        if (null === $post) {
+            $post = $_POST;
+        }
+
+        if (null === $files) {
+            $files = $_FILES;
+        }
+
+        $files = self::normalizeFiles($files);
+        $uri = Uri::createFromGlobals();
+        $method = isset($server['REQUEST_METHOD']) ? $server['REQUEST_METHOD'] : 'GET';
+        $body = new Stream('php://input', 'r+');
+        $headers = function_exists('getallheaders') ? getallheaders() : [];
+
+        $request = new ServerRequest($server, $files, $uri, $method, $body, $headers);
+
+        return $request->withCookieParams($cookie)
+                        ->withQueryParams($get)
+                        ->withParsedBody($post);
+    }
+
+    /**
+     * Normalize uploaded files array.
+     *
+     * @param array $files
+     * @return array
+     * @throws Exception\InvalidArgumentException
+     */
+    public static function normalizeFiles(array $files)
+    {
+        $normalized = [];
+
+        foreach ($files as $key => $value) {
+            if ($value instanceof UploadedFileInterface) {
+                $normalized[$key] = $value;
+            } elseif (is_array($value) && isset($value['tmp_name'])) {
+                $normalized[$key] = UploadedFile::createFromArray($value);
+            } elseif (is_array($value)) {
+                $normalized += self::normalizeFiles($value);
+            } else {
+                throw new Exception\InvalidArgumentException('Invalid value in files specification');
+            }
+        }
+
+        return $normalized;
+    }
+
     /**
      * Retrieve server parameters.
      *
@@ -396,6 +457,12 @@ class ServerRequest implements ServerRequestInterface
         return $clone;
     }
 
+    /**
+     * Validate uploaded files.
+     *
+     * @param array $uploadedFiles
+     * @throws Exception\InvalidArgumentException
+     */
     private function validateUploadedFiles(array $uploadedFiles)
     {
         foreach ($uploadedFiles as $file) {

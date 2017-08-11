@@ -114,6 +114,27 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
+     * Create new instance from the PHP aray spec as it comes on $_FILES global.
+     *
+     * @link http://php.net/manual/en/features.file-upload.post-method.php
+     * @param array $spec
+     * @return \Phower\Http\UploadedFile
+     * @throws Exception\InvalidArgumentException
+     */
+    public static function createFromArray(array $spec)
+    {
+        $keys = ['tmp_name', 'size', 'error', 'name', 'type'];
+
+        foreach ($keys as $key) {
+            if (!array_key_exists($key, $spec)) {
+                throw new Exception\InvalidArgumentException(sprintf('Missing required key: "%s".', $key));
+            }
+        }
+
+        return new UploadedFile($spec['tmp_name'], (int) $spec['size'], (int) $spec['error'], $spec['name'], $spec['type']);
+    }
+
+    /**
      * Retrieve a stream representing the uploaded file.
      *
      * This method MUST return a StreamInterface instance, representing the

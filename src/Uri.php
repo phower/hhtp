@@ -122,6 +122,64 @@ class Uri implements UriInterface
     }
 
     /**
+     * Create new Uri instance from current PHP globals.
+     *
+     * @param array $server
+     * @return Uri
+     */
+    public static function createFromGlobals(array $server = null)
+    {
+        if (null === $server && isset($_SERVER)) {
+            $server = $_SERVER;
+        }
+
+        $uri = new Uri('');
+
+        $scheme = !empty($server['HTTPS']) && $server['HTTPS'] !== 'off' ? 'https' : 'http';
+        $uri = $uri->withScheme($scheme);
+
+        $port = null;
+        if (isset($server['HTTP_HOST'])) {
+            $parts = explode(':', $server['HTTP_HOST']);
+            $uri = $uri->withHost($parts[0]);
+            if (isset($parts[1])) {
+                $port = (int) $parts[1];
+            }
+        } elseif (isset($server['SERVER_NAME'])) {
+            $uri = $uri->withHost($server['SERVER_NAME']);
+        } elseif (isset($server['SERVER_ADDR'])) {
+            $uri = $uri->withHost($server['SERVER_ADDR']);
+        }
+
+        if (null === $port && isset($server['SERVER_PORT'])) {
+            $port = (int) $server['SERVER_PORT'];
+        }
+
+        if ($port) {
+            $uri = $uri->withPort($port);
+        }
+
+        $query = null;
+        if (isset($server['REQUEST_URI'])) {
+            $requestUriParts = explode('?', $server['REQUEST_URI']);
+            $uri = $uri->withPath($requestUriParts[0]);
+            if (isset($requestUriParts[1])) {
+                $query = $requestUriParts[1];
+            }
+        }
+
+        if (null === $query && isset($server['QUERY_STRING'])) {
+            $query = $server['QUERY_STRING'];
+        }
+
+        if ($query) {
+            $uri = $uri->withQuery($query);
+        }
+
+        return $uri;
+    }
+
+    /**
      * Class clone
      */
     public function __clone()

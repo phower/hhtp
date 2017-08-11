@@ -222,4 +222,20 @@ class UploadedFileTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(\Phower\Http\Exception\RuntimeException::class);
         $upload->getStream();
     }
+
+    public function testCreateFromArray()
+    {
+        $spec = [
+            'tmp_name' => '/tmp/' . uniqid(),
+            'size' => rand(1, 10000),
+            'error' => 0,
+            'name' => 'myfile.jpg',
+            'type' => 'image/jpeg',
+        ];
+        $file = \Phower\Http\UploadedFile::createFromArray($spec);
+        $this->assertInstanceOf(\Phower\Http\UploadedFile::class, $file);
+
+        $this->expectException(\Phower\Http\Exception\InvalidArgumentException::class);
+        $file = \Phower\Http\UploadedFile::createFromArray([]);
+    }
 }

@@ -305,4 +305,32 @@ class UriTest extends \PHPUnit_Framework_TestCase
         $new = $uri->withScheme('');
         $this->assertEquals(443, $new->getPort());
     }
+
+    /**
+     * @dataProvider createFromGlobalsProvider
+     * @param string $expected
+     * @param array|null $server
+     */
+    public function testCreateFromGlobals($expected, $server)
+    {
+        $uri = \Phower\Http\Uri::createFromGlobals($server);
+
+        $this->assertInstanceOf(\Phower\Http\Uri::class, $uri);
+        $this->assertEquals($expected, (string) $uri);
+    }
+
+    public function createFromGlobalsProvider()
+    {
+        return [
+            ['http://', null],
+            ['https://', ['HTTPS' => 'on']],
+            ['http://localhost:8000', ['HTTP_HOST' => 'localhost:8000']],
+            ['http://localhost', ['SERVER_NAME' => 'localhost']],
+            ['http://0.0.0.0', ['SERVER_ADDR' => '0.0.0.0']],
+            ['http://0.0.0.0:8000', ['SERVER_ADDR' => '0.0.0.0', 'SERVER_PORT' => 8000]],
+            ['http://localhost/', ['HTTP_HOST' => 'localhost', 'REQUEST_URI' => '/']],
+            ['http://localhost/?foo=bar', ['HTTP_HOST' => 'localhost', 'REQUEST_URI' => '/?foo=bar']],
+            ['http://localhost?foo=bar', ['HTTP_HOST' => 'localhost', 'QUERY_STRING' => 'foo=bar']],
+        ];
+    }
 }
