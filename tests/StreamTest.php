@@ -419,4 +419,13 @@ class StreamTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(__FILE__, $stream->getMetadata('uri'));
         $this->assertNull($stream->getMetadata('invalid key'));
     }
+
+    public function testCreateFromString()
+    {
+        $string = uniqid();
+        $stream = \Phower\Http\Stream::createFromString($string);
+
+        $this->assertInstanceOf(\Phower\Http\Stream::class, $stream);
+        $this->assertEquals($stream, $stream->getContents());
+    }
 }

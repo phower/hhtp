@@ -60,6 +60,21 @@ class Stream implements StreamInterface
     }
 
     /**
+     * Create new instance from a plain string.
+     *
+     * @param string $string
+     * @return \Phower\Http\Stream
+     */
+    public static function createFromString($string)
+    {
+        $resource = fopen('php://memory', 'r+');
+        fwrite($resource, (string) $string);
+        rewind($resource);
+
+        return new Stream($resource);
+    }
+
+    /**
      * Reads all data from the stream into a string, from the beginning to end.
      *
      * This method MUST attempt to seek to the beginning of the stream before
